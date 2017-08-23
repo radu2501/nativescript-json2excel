@@ -1,0 +1,10 @@
+android {
+    productFlavors {
+        "nativescript-json2excel" {
+            dimension "nativescript-json2excel"
+        }
+    }
+}
+dependencies {
+    compile group: 'org.apache.poi', name: 'poi', version: '3.9'
+}
