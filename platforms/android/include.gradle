@@ -6,5 +6,5 @@ android {
     }
 }
 dependencies {
-    compile group: 'org.apache.poi', name: 'poi', version: '3.9'
+    compile fileTree(dir: 'libs', include: '*.jar')
 }

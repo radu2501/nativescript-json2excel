@@ -1,37 +1,44 @@
 declare var java;
-declare var org;
+declare var jxl;
+declare var ro;
 
-let Cell = org.apache.poi.ss.usermodel.Cell;
-let CreationHelper = org.apache.poi.ss.usermodel.CreationHelper;
-let Row = org.apache.poi.ss.usermodel.Row;
-let Sheet = org.apache.poi.ss.usermodel.Sheet;
-let Workbook = org.apache.poi.ss.usermodel.Workbook;
-let XSSFWorkbook = org.apache.poi.xssf.usermodel.XSSFWorkbook;
+let WorkbookSettings = jxl.WorkbookSettings;
+let WritableWorkbook = ro.nicoara.radu.jexcelwrapper.WritableWorkbookWrapper;
+let WritableFont = jxl.write.WritableFont;
 
 import { get } from 'lodash';
+import * as util from './util';
 
-export function json2XlsxFile(json: any[], path: string, options: JsonToXlsxOptions): void {
-    let wb = new XSSFWorkbook();
-    let helper = wb.getCreationHelper();
+export function json2XlsFile(json: any[], path: string, options: JsonToXlsxOptions): void {
+    let file = new java.io.File(path);
+    let wbSettings = new WorkbookSettings();
 
-    let sheet = wb.createSheet(options.sheetName);
+    wbSettings.setLocale(new java.util.Locale('en', 'EN'));
 
-    let headerRow = sheet.createRow(0);
+    let workbook = WritableWorkbook.createWorkbook(file, wbSettings);
+    let sheet = workbook.createSheet(options.sheetName, 0);
+
+
     options.fields.forEach((field, index) => {
-        headerRow.createCell(index).setCellValue(helper.createRichTextString(field.title || field.field));
+        util.addLabel(sheet, index, 0, field.title || field.field);
     });
     json.forEach((row, index) => {
-        let xRow = sheet.createRow(index + 1);
         options.fields.forEach((field, fieldIndex) => {
-            xRow.createCell(fieldIndex).setCellValue(get(row, field.field));
+            if (field.type === 'number') {
+                return util.addNumber(sheet, fieldIndex, index + 1, get(row, field.field) as number);
+            }
+            util.addLabel(sheet, fieldIndex, index + 1, ('' + get(row, field.field)) as string);
         });
     });
 
-    let fos = new java.io.FileOutputStream(path);
-    wb.write(fos);
+    workbook.write();
+    workbook.close();
 }
 
 export interface JsonToXlsxOptions {
-    fields: { title?: string, field: string }[],
-    sheetName: string
+    fields: { title?: string, field: string, type?: string }[];
+    sheetName: string;
 }
+
+
+
