@@ -6,4 +6,6 @@ export interface JsonToXlsxOptions {
         type?: string;
     }[];
     sheetName: string;
+    autoSize?: boolean;
+    width?: number;
 }

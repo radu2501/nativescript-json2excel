@@ -30,7 +30,15 @@ export function json2XlsFile(json: any[], path: string, options: JsonToXlsxOptio
             util.addLabel(sheet, fieldIndex, index + 1, ('' + get(row, field.field)) as string);
         });
     });
+    
+    if (options.autoSize) {
+        sheet.setAutoSize(true);
+    }
 
+    if (options.width && options.width > 0) {
+        sheet.setColumnsWidth(options.width);
+    }
+    
     workbook.write();
     workbook.close();
 }
@@ -38,6 +46,8 @@ export function json2XlsFile(json: any[], path: string, options: JsonToXlsxOptio
 export interface JsonToXlsxOptions {
     fields: { title?: string, field: string, type?: string }[];
     sheetName: string;
+    autoSize?: boolean;
+    width?: number
 }
 
 

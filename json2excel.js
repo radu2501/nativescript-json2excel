@@ -25,6 +25,9 @@ function json2XlsFile(json, path, options) {
     if (options.autoSize) {
         sheet.setAutoSize(true);
     }
+    if (options.width && options.width > 0) {
+        sheet.setColumnsWidth(options.width);
+    }
     workbook.write();
     workbook.close();
 }
